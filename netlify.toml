@@ -1,0 +1,5 @@
+[[plugins]]
+package = "@netlify/plugin-nextjs"
+  [plugins.inputs]
+    NODE_ENV = "production"
+    AZURE_SECRET_ACCESS_KEY = "5f8079bb0e5840db9183f4595a467fc7"
