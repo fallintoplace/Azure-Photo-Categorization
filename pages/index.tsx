@@ -1,13 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
 
+interface Prediction {
+  text: string;
+  confidence: number;
+}
+
 export default function Home() {
-  const [imageUrl, setImageUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [predictions, setPredictions] = useState([]);
-  const [imageSrc, setImageSrc] = useState("");
-  const [imageKey, setImageKey] = useState(0);
-  console.log(process.env.AZURE_SECRET_ACCESS_KEY)
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [imageSrc, setImageSrc] = useState<string>("");
+  const [imageKey, setImageKey] = useState<number>(0);
 
   const handleGetPredictions = async () => {
     setIsLoading(true);
@@ -18,19 +22,20 @@ export default function Home() {
         {
           headers: {
             "Content-Type": "application/json",
-            "Ocp-Apim-Subscription-Key": process.env.AZURE_SECRET_ACCESS_KEY,
+            "Ocp-Apim-Subscription-Key": process.env.AZURE_SECRET_ACCESS_KEY as string,
           },
         }
       );
       setImageSrc(imageUrl);
       setImageKey((prevKey) => prevKey + 1);
 
-
-      const tags = response.data.description.tags;
-      const predictions = response.data.description.captions.map((caption) => ({
-        text: caption.text,
-        confidence: caption.confidence,
-      }));
+      const tags: string[] = response.data.description.tags;
+      const predictions: Prediction[] = response.data.description.captions.map(
+        (caption: { text: string; confidence: number }) => ({
+          text: caption.text,
+          confidence: caption.confidence,
+        })
+      );
 
       for (let tag of tags) {
         predictions.push({
